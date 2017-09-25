@@ -2,9 +2,9 @@ import Vue from 'vue'
 import App from './App'
 import { ipcRenderer } from 'electron'
 
-// If this is an editor window, it will have #render-window.
+// If this is an editor window, it will have #renderer-window in the DOM.
 // If so, boot the vue app.
-if (document.querySelector('#render-window')) {
+if (document.querySelector('#renderer-window')) {
   rendererMain()
 }
 

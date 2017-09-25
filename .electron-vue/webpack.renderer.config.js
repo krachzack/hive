@@ -23,8 +23,8 @@ let whiteListedModules = ['vue']
 let rendererConfig = {
   devtool: '#cheap-module-eval-source-map',
   entry: {
-    renderer: path.join(__dirname, '../src/renderer/rendererMain.js'),
-    analyzer: path.join(__dirname, '../src/analyzer/analyzerMain.js')
+    renderer: path.join(__dirname, '../src/renderer/renderer.js'),
+    analyzer: path.join(__dirname, '../src/analyzer/analyzer.js')
   },
   externals: [
     ...Object.keys(dependencies || {}).filter(d => !whiteListedModules.includes(d))
@@ -112,8 +112,8 @@ let rendererConfig = {
   plugins: [
     new ExtractTextPlugin('styles.css'),
     new HtmlWebpackPlugin({
-      filename: 'index.html',
-      template: path.resolve(__dirname, '../src/index.ejs'),
+      filename: 'renderer.html',
+      template: path.resolve(__dirname, '../src/renderer.ejs'),
       minify: {
         collapseWhitespace: true,
         removeAttributeQuotes: true,
@@ -124,8 +124,8 @@ let rendererConfig = {
         : false
     }),
     new HtmlWebpackPlugin({
-      filename: 'screenCapture.html',
-      template: path.resolve(__dirname, '../src/screenCapture.ejs'),
+      filename: 'analyzer.html',
+      template: path.resolve(__dirname, '../src/analyzer.ejs'),
       minify: {
         collapseWhitespace: true,
         removeAttributeQuotes: true,

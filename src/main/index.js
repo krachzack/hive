@@ -16,17 +16,19 @@ if (process.env.NODE_ENV !== 'development') {
 
 let mainWindow
 const winURL = process.env.NODE_ENV === 'development'
-  ? `http://localhost:9080`
-  : `file://${__dirname}/index.html`
+  ? `http://localhost:9080/renderer.html`
+  : `file://${__dirname}/renderer.html`
 
-const screenCaptureURL = process.env.NODE_ENV === 'development'
-  ? `http://localhost:9080/screenCapture.html`
-  : `file://${__dirname}/screenCapture.html`
+const analyzerURL = process.env.NODE_ENV === 'development'
+  ? `http://localhost:9080/analyzer.html`
+  : `file://${__dirname}/analyzer.html`
 
 const sinks = []
 let screenColor
 
-let screenCaptureWindow
+// Invisible background window that does screen capture and
+// sends updates to this process
+let analyzerWindow
 
 function createWindows () {
   /**
@@ -44,11 +46,11 @@ function createWindows () {
     mainWindow = null
   })
 
-  if (!screenCaptureWindow) {
-    screenCaptureWindow = new BrowserWindow({
+  if (!analyzerWindow) {
+    analyzerWindow = new BrowserWindow({
       show: false
     })
-    screenCaptureWindow.loadURL(screenCaptureURL)
+    analyzerWindow.loadURL(analyzerURL)
   }
 }
 
@@ -66,8 +68,10 @@ app.on('activate', () => {
   }
 })
 
-const pushScreenColorToWindow = throttle(function () {
-  mainWindow.webContents.send('screen-color-change', screenColor)
+const pushScreenColorToWindow = throttle(function pushScreenColorToWindowInner () {
+  if (mainWindow && mainWindow.webContents) {
+    mainWindow.webContents.send('screen-color-change', screenColor)
+  }
 }, 100)
 
 ipcMain.on('sink-service-discover', (event, arg) => browseSinks(event))
