@@ -1,16 +1,40 @@
 import { desktopCapturer } from 'electron'
 
+const useAudio = false
+const updateInterval = 50
+
 export default function desktopCapture (updateFunc) {
   const video = createVideoElement()
   const [ canvas, ctx ] = createCanvasElementAndCtx()
 
   desktopCapturer.getSources({types: ['screen']}, (error, sources) => {
-    if (error) throw error
+    if (error) {
+      console.error('Error finding media source for desktop capturing')
+      throw error
+    }
+
     for (let i = 0; i < sources.length; ++i) {
-      // Filter: main screen
       if (sources[i].name === 'Entire screen') {
-        navigator.webkitGetUserMedia({
-          audio: false, // TODO analyze the audio!
+        // As per documentation, this should be working, but it does only work on windows
+        // Showcase of the error: https://github.com/mhashmi/electron-desktop-capture
+        // https://github.com/electron/electron/issues/10515
+        // https://github.com/electron/electron/issues/4776
+        const videoAndAudioOpts = {
+          audio: {
+            mandatory: {
+              chromeMediaSource: 'desktop'
+            }
+          },
+          video: {
+            mandatory: {
+              chromeMediaSource: 'desktop'
+            }
+          }
+        }
+
+        // If not using audio, it works
+        const videoOnlyOpts = {
+          audio: false,
           video: {
             mandatory: {
               chromeMediaSource: 'desktop',
@@ -22,14 +46,23 @@ export default function desktopCapture (updateFunc) {
               maxFrameRate: 30
             }
           }
-        }, handleStream, handleError)
+        }
+
+        const opts = useAudio ? videoAndAudioOpts : videoOnlyOpts
+
+        // This breaks: navigator.mediaDevices.getUserMedia(opts, handleStream, handleError)
+        // but the following version works:
+        navigator.getUserMedia(opts, handleStream, handleError)
         return
       }
     }
+
+    throw new Error('No media source for desktop capturing found')
   })
 
   function handleStream (stream) {
     video.src = URL.createObjectURL(stream)
+    video.onloadedmetadata = updateSelectedColorFromDesktop
     updateSelectedColorFromDesktop()
   }
 
@@ -51,13 +84,15 @@ export default function desktopCapture (updateFunc) {
       )
     }
 
-    setTimeout(updateSelectedColorFromDesktop, 100)
+    setTimeout(updateSelectedColorFromDesktop, updateInterval)
   }
 }
 
 function createVideoElement () {
   const video = document.createElement('video')
   video.style.display = 'none'
+  video.autoplay = true
+  video.defaultMuted = true
 
   document.body.appendChild(video)
 
