@@ -1,16 +1,9 @@
 import { desktopCapturer } from 'electron'
 import tinycolor from 'tinycolor2'
 
-export function screenCapture (updateFunc) {
-  const video = document.createElement('video')
-  video.style.display = 'none'
-  document.body.appendChild(video)
-
-  const canvas = document.createElement('canvas')
-  canvas.style.display = 'none'
-  document.body.appendChild(canvas)
-
-  const ctx = canvas.getContext('2d')
+export function desktopCapture (updateFunc) {
+  const video = createVideoElement()
+  const [ canvas, ctx ] = createCanvasElementAndCtx()
 
   desktopCapturer.getSources({types: ['screen']}, (error, sources) => {
     if (error) throw error
@@ -35,6 +28,23 @@ export function screenCapture (updateFunc) {
       }
     }
   })
+
+  function createVideoElement () {
+    const video = document.createElement('video')
+    video.style.display = 'none'
+    document.body.appendChild(video)
+    return video
+  }
+
+  function createCanvasElementAndCtx () {
+    const canvas = document.createElement('canvas')
+    canvas.style.display = 'none'
+    document.body.appendChild(canvas)
+
+    const ctx = canvas.getContext('2d')
+
+    return [ canvas, ctx ]
+  }
 
   function handleStream (stream) {
     video.src = URL.createObjectURL(stream)

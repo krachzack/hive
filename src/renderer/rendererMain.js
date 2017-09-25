@@ -2,7 +2,13 @@ import Vue from 'vue'
 import App from './App'
 import { ipcRenderer } from 'electron'
 
-if (document.querySelector('#app')) {
+// If this is an editor window, it will have #render-window.
+// If so, boot the vue app.
+if (document.querySelector('#render-window')) {
+  rendererMain()
+}
+
+function rendererMain () {
   Vue.config.productionTip = false
 
   const vm = new Vue({
