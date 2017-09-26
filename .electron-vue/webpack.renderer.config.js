@@ -113,7 +113,7 @@ let rendererConfig = {
     new ExtractTextPlugin('styles.css'),
     new HtmlWebpackPlugin({
       filename: 'renderer.html',
-      template: path.resolve(__dirname, '../src/renderer.ejs'),
+      template: path.resolve(__dirname, '../src/renderer/renderer.ejs'),
       minify: {
         collapseWhitespace: true,
         removeAttributeQuotes: true,
@@ -125,7 +125,7 @@ let rendererConfig = {
     }),
     new HtmlWebpackPlugin({
       filename: 'analyzer.html',
-      template: path.resolve(__dirname, '../src/analyzer.ejs'),
+      template: path.resolve(__dirname, '../src/analyzer/analyzer.ejs'),
       minify: {
         collapseWhitespace: true,
         removeAttributeQuotes: true,
