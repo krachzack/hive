@@ -53,7 +53,7 @@
     }
   },
   "dependencies": {
-    "atolla": "^1.0.3",
+    "atolla": "^1.0.4",
     "lodash.throttle": "^4.1.1",
     "mdns": "^2.3.3",
     "string-hash": "^1.1.3",
