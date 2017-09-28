@@ -140,9 +140,11 @@ const connectSink = throttle(function connectSinkInner (sink) {
       const serviceStatusChange = { id: sink.id }
 
       if (newState === 'ATOLLA_SOURCE_STATE_ERROR') {
-        // Try connecting again in 3 seconds
+        // Try connecting again in 3 seconds if still in error state
         setTimeout(function () {
-          connectSink(sink)
+          if (sink.conn.state === 'ATOLLA_SOURCE_STATE_ERROR') {
+            connectSink(sink)
+          }
         }, 3000)
 
         serviceStatusChange.connected = false

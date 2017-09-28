@@ -1,7 +1,7 @@
 <template>
   <div v-if="item">
     <h1 >{{ item.name }}</h1>
-    
+
     <h2>Device Information</h2>
 
     <dl>
@@ -67,16 +67,18 @@
       }
     },
     computed: {
-      inputMode: function () { return this.item ? this.item.inputMode : null },
-      pickerColor: function () { return this.item ? this.item.pickerColor : null },
-      enabledColor: function () {
-        if (!this.item) { return 'black' }
-
-        switch (this.item.inputMode) {
+      inputMode () { return this.item ? this.item.inputMode : null },
+      pickerColor () { return this.item ? this.item.pickerColor : null },
+      enabledColor () {
+        switch (this.inputMode) {
           case 'picker':
             return this.item.pickerColor
           case 'screen':
             return this.screenColor
+          case null:
+            return 'transparent'
+          default:
+            throw new Error(`Illegal input mode ${this.inputMode}`)
         }
       }
     },

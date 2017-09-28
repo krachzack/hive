@@ -1,7 +1,7 @@
 import { desktopCapturer } from 'electron'
 
 const useAudio = false
-const updateInterval = 50
+const updateInterval = 100
 
 export default function desktopCapture (updateFunc) {
   const video = createVideoElement()
