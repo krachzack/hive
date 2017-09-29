@@ -93,10 +93,12 @@ function browseSinks (event) {
   browser.start()
 
   function excerpt (service) {
-    const address = service.addresses.find((addr) => addr.indexOf('.') !== -1)
+    // If first address looks like a link-local IP-Adress, add the network interface name to make the address routable
+    // For complete IPv6 addresses or IPv4 just take the address as it is
+    const address = (service.addresses[0].indexOf('::') !== -1) ? `${service.addresses[0]}%${service.networkInterface}` : service.addresses[0]
 
     return {
-      id: hash(address + service.port + service.fullname),
+      id: hash(service.port + service.fullname),
       name: service.name,
       address,
       port: service.port,
