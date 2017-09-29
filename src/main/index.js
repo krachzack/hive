@@ -134,6 +134,7 @@ const connectSink = throttle(function connectSinkInner (sink) {
     port: sink.port,
     frameDurationMs: 30,
     maxBufferedFrames: 2,
+    disconnectTimeout: 1000,
     painter: function () {
       let color
 
