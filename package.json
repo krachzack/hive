@@ -52,8 +52,12 @@
       "icon": "build/icons"
     }
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/krachzack/hive.git"
+  },
   "dependencies": {
-    "atolla": "^1.0.5",
+    "atolla": "^1.0.7",
     "lodash.throttle": "^4.1.1",
     "mdns": "^2.3.3",
     "string-hash": "^1.1.3",
