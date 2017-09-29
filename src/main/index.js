@@ -48,7 +48,10 @@ function createWindows () {
 
   if (!analyzerWindow) {
     analyzerWindow = new BrowserWindow({
-      show: false
+      show: false,
+      webPreferences: {
+        backgroundThrottling: false
+      }
     })
     analyzerWindow.loadURL(analyzerURL)
   }
@@ -93,16 +96,23 @@ function browseSinks (event) {
   browser.start()
 
   function excerpt (service) {
-    // If first address looks like a link-local IP-Adress, add the network interface name to make the address routable
-    // For complete IPv6 addresses or IPv4 just take the address as it is
-    const address = (service.addresses[0].indexOf('::') !== -1) ? `${service.addresses[0]}%${service.networkInterface}` : service.addresses[0]
-
     return {
       id: hash(service.port + service.fullname),
       name: service.name,
-      address,
+      address: formatAddress(service),
       port: service.port,
       fullname: service.fullname
+    }
+  }
+
+  function formatAddress (service) {
+    const address = service.addresses[0] // Select the first
+    const isV6 = address.indexOf(':') !== -1
+
+    if (isV6) {
+      return `${address}%${service.networkInterface}`
+    } else {
+      return address
     }
   }
 }
