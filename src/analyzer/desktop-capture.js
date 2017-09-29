@@ -13,51 +13,57 @@ export default function desktopCapture (updateFunc) {
       throw error
     }
 
-    for (let i = 0; i < sources.length; ++i) {
-      if (sources[i].name === 'Entire screen') {
-        // As per documentation, this should be working, but it does only work on windows
-        // Showcase of the error: https://github.com/mhashmi/electron-desktop-capture
-        // https://github.com/electron/electron/issues/10515
-        // https://github.com/electron/electron/issues/4776
-        const videoAndAudioOpts = {
-          audio: {
-            mandatory: {
-              chromeMediaSource: 'desktop'
-            }
-          },
-          video: {
-            mandatory: {
-              chromeMediaSource: 'desktop'
-            }
-          }
+    // If one is named Entire Screen, take that one, otherwise try
+    // Screen 1, if that is also unavailable, take the first source
+    const bestSource = sources.find(s => s.name === 'Entire screen') ||
+                       sources.find(s => s.name === 'Screen 1') ||
+                       sources[0]
+
+    if (!bestSource) {
+      // If none of the above found a suitable source and there is no first element either, mission abort
+      throw new Error('No media source for desktop capturing found')
+    }
+
+    // As per documentation, this should be working, but it does only work on windows
+    // Showcase of the error: https://github.com/mhashmi/electron-desktop-capture
+    // https://github.com/electron/electron/issues/10515
+    // https://github.com/electron/electron/issues/4776
+    const videoAndAudioOpts = {
+      audio: {
+        mandatory: {
+          chromeMediaSource: 'desktop'
         }
-
-        // If not using audio, it works
-        const videoOnlyOpts = {
-          audio: false,
-          video: {
-            mandatory: {
-              chromeMediaSource: 'desktop',
-              chromeMediaSourceId: sources[i].id,
-              minWidth: 112,
-              maxWidth: 112,
-              minHeight: 63,
-              maxHeight: 63,
-              maxFrameRate: 30
-            }
-          }
+      },
+      video: {
+        mandatory: {
+          chromeMediaSource: 'desktop'
         }
-
-        const opts = useAudio ? videoAndAudioOpts : videoOnlyOpts
-
-        // This breaks: navigator.mediaDevices.getUserMedia(opts, handleStream, handleError)
-        // but the following version works:
-        navigator.getUserMedia(opts, handleStream, handleError)
-        return
       }
     }
 
-    throw new Error('No media source for desktop capturing found')
+    // If not using audio, it always works
+    const videoOnlyOpts = {
+      audio: false,
+      video: {
+        mandatory: {
+          chromeMediaSource: 'desktop',
+          chromeMediaSourceId: bestSource.id,
+          minWidth: 112,
+          maxWidth: 112,
+          minHeight: 63,
+          maxHeight: 63,
+          maxFrameRate: 30
+        }
+      }
+    }
+
+    const opts = useAudio ? videoAndAudioOpts : videoOnlyOpts
+
+    console.log('Capturing source: ', bestSource)
+
+    // This breaks: navigator.mediaDevices.getUserMedia(opts, handleStream, handleError)
+    // but the following version works:
+    navigator.getUserMedia(opts, handleStream, handleError)
   })
 
   function handleStream (stream) {

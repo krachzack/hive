@@ -18,8 +18,6 @@ function analyzerMain () {
     desktopColor = enhanceColor(desktopColor)
     desktopColor = new Uint8Array(desktopColor)
 
-    console.log(desktopColor)
-
     ipcRenderer.send('screen-color-change', desktopColor)
   })
 }
