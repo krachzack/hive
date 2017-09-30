@@ -52,7 +52,7 @@ export default function desktopCapture (updateFunc) {
           maxWidth: 112,
           minHeight: 63,
           maxHeight: 63,
-          maxFrameRate: 30
+          maxFrameRate: Math.ceil(1000 / updateInterval)
         }
       }
     }

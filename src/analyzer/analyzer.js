@@ -1,6 +1,5 @@
 import desktopCapture from './desktop-capture'
-import averageColor from './average-color'
-import enhanceColor from './enhance-color'
+import dominantColors from './dominant-colors'
 import { ipcRenderer } from 'electron'
 
 // If this is the invisible screen capture window, start
@@ -14,10 +13,9 @@ function analyzerMain () {
   desktopCapture(function (desktopState) {
     const { imageData } = desktopState
 
-    let desktopColor = averageColor(imageData)
-    desktopColor = enhanceColor(desktopColor)
-    desktopColor = new Uint8Array(desktopColor)
+    let desktopColors = dominantColors(imageData)
+    desktopColors = new Uint8Array(desktopColors)
 
-    ipcRenderer.send('screen-color-change', desktopColor)
+    ipcRenderer.send('screen-color-change', desktopColors)
   })
 }

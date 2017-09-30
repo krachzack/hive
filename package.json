@@ -58,6 +58,7 @@
   },
   "dependencies": {
     "atolla": "^1.0.7",
+    "get-rgba-palette": "^2.0.1",
     "lodash.throttle": "^4.1.1",
     "mdns": "^2.3.3",
     "string-hash": "^1.1.3",
